@@ -1,0 +1,96 @@
+import java.util.*;
+class PriorityQueue<K extends Comparable<K>>
+{
+    private K[] a;
+    private int n;
+    PriorityQueue(int size)
+    {
+        a=(K[])new Comparable[size];
+        n=0;
+    }
+    public void insert(K key)
+    {
+        
+        if(n==a.length-1)
+        resize(2*a.length);
+        a[++n]=key;
+        swim(n);
+    }
+    private void swim(int k)
+    {
+        while(k>1 && less(k/2, k))
+        {
+            exch(k/2, k);
+            k=k/2;
+        }
+    }
+    private void exch(int i, int j)
+    {
+        K key=a[i];
+        a[i]=a[j];
+        a[j]=key;
+    }
+    private boolean less(int k, int j)
+    {
+        return a[k].compareTo(a[j])<0;
+    }
+    public K delMax()
+    {
+        K maxi=a[1];
+        exch(1,n--);
+        a[n+1]=null;
+        sink(1);
+        if(n>0 && n==a.length/4)
+        resize(a.length/2);
+        return maxi;
+    }
+    private void sink(int k)
+    {
+        while(2*k<=n )
+        {
+            int j=2*k;
+            if(j<n && less(j,j+1))
+            j++;
+            if(less(k, j))
+            {
+            exch(k,j);
+            k=j;
+            }
+            else
+            break;
+        }
+    }
+    private void resize(int cap)
+    {
+        K[] a2=(K[])new Comparable[cap];
+        for(int i=1;i<=n;i++)
+        {
+            a2[i]=a[i];
+        }
+        a=a2;
+    }
+    
+}
+public class Main
+{
+	public static void main(String[] args) {
+		PriorityQueue<Integer> pq=new PriorityQueue(10);
+		pq.insert(23);
+		pq.insert(233);
+		pq.insert(54);
+		pq.insert(1);
+		pq.insert(1);
+		pq.insert(233);
+		pq.insert(233);
+		pq.insert(54);
+		pq.insert(1);
+		pq.insert(1);
+ 		pq.insert(233);
+		System.out.println(pq.delMax());
+		System.out.println(pq.delMax());
+		System.out.println(pq.delMax());
+		System.out.println(pq.delMax());
+		System.out.println(pq.delMax());
+		System.out.println(pq.delMax());System.out.println(pq.delMax());
+	}
+}
