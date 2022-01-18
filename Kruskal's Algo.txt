@@ -1,0 +1,108 @@
+import java.util.*;
+class  Node 
+{
+    int v1;
+    int v2;
+    int wt;
+    Node(int v1, int v2, int wt)
+    {
+        this.v1=v1;
+        this.v2=v2;
+        this.wt=wt;
+    }
+}
+class WeightSort implements Comparator<Node>
+{
+    public int compare(Node n1, Node n2)
+    {
+        if(n1.wt < n2.wt)
+        return -1;
+        if(n1.wt > n2.wt)
+        return 1;
+        return 0;
+    }
+}
+public class Main
+{
+    public int findParent(int u, int[] parent)
+    {
+        while(u!= parent[u])
+        {
+            u=parent[u];
+        }
+        return u;
+    }
+    public void union(int u, int v, int[] parent, int[] rank)
+    {
+        int v1=findParent(u ,parent);
+        int v2=findParent(v , parent);
+        if(rank[v1] > rank[v2])
+        {
+            parent[v2]=v1;
+        }
+        else if(rank[v1] < rank[v2])
+        {
+            parent[v1]=v2;
+        }
+        else
+        {
+        parent[v2]=v1;
+        rank[v1]++;
+        }
+        
+    }
+    public void Kruskals(ArrayList<Node> adj, int n)
+    {
+        int[] parent=new int[n];
+        int[] rank=new int[n];
+        int i;
+        for(i=0;i<n;i++)
+        {
+            parent[i]=i;
+            rank[i]=0;
+        }
+        Collections.sort(adj,new WeightSort());
+        //System.out.println(adj);
+        // for(Node it : adj)
+        // {
+        //  System.out.println(it.v1+" "+it.v2+ " "+it.wt);   
+        // }
+        int mincost=0;
+        ArrayList<Node> mstree=new ArrayList<>();
+        for(Node it : adj)
+        {
+            if(findParent(it.v1 , parent) != findParent(it.v2 , parent))
+            {
+                mincost=mincost+it.wt;
+                mstree.add(it);
+                union(it.v1, it.v2 , parent, rank);
+            }
+            
+        }
+        System.out.println("Mincost is "+mincost);
+        System.out.println("Spanning tree is : ");
+        for(Node nd : mstree)
+        {
+            System.out.println(nd.v1+" "+nd.v2+" "+nd.wt);
+        }
+        
+    }
+    
+	public static void main(String[] args) {
+	    Scanner sc=new Scanner(System.in);
+	    Main obj=new Main();
+	    ArrayList<Node> adj=new ArrayList<>();
+	    int n=sc.nextInt(); // no. of vertices
+	    int e=sc.nextInt();
+	    int i;
+	    for(i=0;i<e;i++)
+	    {
+	        int ver1=sc.nextInt();
+	        int ver2=sc.nextInt();
+	        int weight=sc.nextInt();
+	        adj.add(new Node(ver1, ver2, weight));
+	    }
+	    obj.Kruskals(adj, n);
+		
+	}
+}
